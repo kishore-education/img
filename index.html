@@ -161,7 +161,7 @@
       return (
         <div style={styles.container}>
           <h1 style={styles.header} className="floating-header">UPLOAD IMAGE TO GASWALA</h1>
-          <input type="file" accept="image/*" style={styles.input} onChange={handleImageChange} />
+          <input type="file" accept="image/*" capture="environment" style={styles.input} onChange={handleImageChange} />
           <div style={styles.successMessageContainer}>{message}</div>
           <div style={styles.imagePreviewContainer}>
             {imageUrl && <img src={imageUrl} style={styles.imagePreview} alt="Preview" />}
