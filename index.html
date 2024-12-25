@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Image to Gaswala</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+    body {
+      background-image: url('https://img.freepik.com/free-photo/gradient-iphone-wallpaper-oil-bubble-water-background_53876-176849.jpg?w=360');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      font-family: 'Quicksand', sans-serif;
+    }
+    .floating-header {
+      position: relative;
+      z-index: 1;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const styles = {
+      container: {
+        flex: 1,
+      },
+      header: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        textAlign: 'center',
+        backgroundColor: 'black',
+        color: 'white',
+        padding: '10px',
+        borderRadius: '15px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        position: 'relative',
+        zIndex: 1,
+      },
+      input: {
+        padding: '15px',
+        border: '1px solid #ccc',
+        borderRadius: '15px',
+        marginBottom: '10px',
+        width: '100%',
+        boxSizing: 'border-box',
+        fontFamily: 'montserrat',
+        color: '#2C3E50',
+        fontSize: '13px',
+      },
+      bookingButton: {
+        width: '100%',
+        backgroundColor: '#27AE60',
+        fontWeight: 'bold',
+        color: 'white',
+        border: '0 none',
+        borderRadius: '15px',
+        cursor: 'pointer',
+        padding: '10px',
+        margin: '10px 0',
+        textDecoration: 'none',
+        fontSize: '14px',
+      },
+      successMessageContainer: {
+        padding: '16px',
+        backgroundColor: '#d4edda',
+        borderColor: '#c3e6cb',
+        borderWidth: '1px',
+        borderRadius: '5px',
+        margin: '16px',
+        alignItems: 'center',
+      },
+      successMessage: {
+        color: '#155724',
+        fontSize: '16px',
+        marginBottom: '8px',
+      },
+      imagePreviewContainer: {
+        alignItems: 'center',
+        marginVertical: '20px',
+      },
+      imagePreview: {
+        width: '200px',
+        height: '200px',
+        borderRadius: '10px',
+      },
+    };
+
+    function App() {
+      const [image, setImage] = useState(null);
+      const [imageUrl, setImageUrl] = useState('');
+      const [message, setMessage] = useState('');
+      const [userDetails, setUserDetails] = useState({
+        name: '',
+        mobile: '',
+        address: ''
+      });
+
+      const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (!file) {
+          setMessage('Please select a file to upload.');
+          return;
+        }
+
+        setMessage('Processing...');
+        const form = new FormData();
+        form.append("image", file);
+
+        const settings = {
+          url: "https://api.imgbb.com/1/upload?key=43dbf9c00d857313ec47281400a87ca7",
+          method: "POST",
+          processData: false,
+          mimeType: "multipart/form-data",
+          contentType: false,
+          data: form
+        };
+
+        $.ajax(settings).done(function (response) {
+          const data = JSON.parse(response);
+          setImageUrl(data.data.display_url);
+          setMessage('Done');
+        });
+      };
+
+      const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setUserDetails({ ...userDetails, [name]: value });
+      };
+
+      const handleSubmit = (event) => {
+        event.preventDefault();
+        const details = { ...userDetails, imageUrl };
+
+        $.ajax({
+          url: 'http://127.0.0.1:8000/book_with_image',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(details),
+          success: function(response) {
+            alert('Booking details sent to Telegram');
+            window.location.href = 'https://gas-blush-eta.vercel.app/';
+          },
+          error: function(error) {
+            alert('Error sending booking details');
+          }
+        });
+      };
+
+      return (
+        <div style={styles.container}>
+          <h1 style={styles.header} className="floating-header">UPLOAD IMAGE TO GASWALA</h1>
+          <input type="file" accept="image/*" style={styles.input} onChange={handleImageChange} />
+          <div style={styles.successMessageContainer}>{message}</div>
+          <div style={styles.imagePreviewContainer}>
+            {imageUrl && <img src={imageUrl} style={styles.imagePreview} alt="Preview" />}
+          </div>
+          <form id="userDetailsForm" onSubmit={handleSubmit}>
+            <input type="text" name="name" placeholder="Name" required onChange={handleInputChange} style={styles.input} />
+            <input type="text" name="mobile" placeholder="Mobile" required onChange={handleInputChange} style={styles.input} />
+            <input type="text" name="address" placeholder="Address" required onChange={handleInputChange} style={styles.input} />
+            <button type="submit" style={styles.bookingButton}>Submit</button>
+          </form>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+</body>
+</html>
