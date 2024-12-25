@@ -20,6 +20,15 @@
       border-radius: 15px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+    .blink {
+      animation: blinker 1s linear infinite;
+    }
+
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -58,9 +67,6 @@
         fontFamily: 'montserrat',
         color: '#2C3E50',
         fontSize: '13px',
-        backgroundColor: '#28a745', // Make the button green
-        color: 'white', // Change text color to white
-        cursor: 'pointer', // Add pointer cursor
       },
       bookingButton: {
         width: '100%',
@@ -97,6 +103,19 @@
         width: '200px',
         height: '200px',
         borderRadius: '10px',
+      },
+      photoButton: {
+        padding: '15px',
+        border: '1px solid #ccc',
+        borderRadius: '15px',
+        marginBottom: '10px',
+        width: '100%',
+        boxSizing: 'border-box',
+        fontFamily: 'montserrat',
+        color: 'white',
+        fontSize: '13px',
+        backgroundColor: '#27AE60',
+        cursor: 'pointer',
       },
     };
 
@@ -177,7 +196,7 @@
       return (
         <div style={styles.container}>
           <h1 style={styles.header} className="floating-header">UPLOAD IMAGE TO GASWALA</h1>
-          <button onClick={openCamera} style={styles.input}>Take Photo</button>
+          <button onClick={openCamera} style={styles.photoButton} className={!imageUrl ? 'blink' : ''}> To  Take Photo Click Me</button>
           <div style={styles.successMessageContainer}>{message}</div>
           <div style={styles.imagePreviewContainer}>
             {imageUrl && <img src={imageUrl} style={styles.imagePreview} alt="Preview" />}
