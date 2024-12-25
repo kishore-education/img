@@ -150,6 +150,10 @@
 
       const handleSubmit = (event) => {
         event.preventDefault();
+        if (!imageUrl) {
+          setMessage('Please upload an image.');
+          return;
+        }
         const details = { ...userDetails, imageUrl };
 
         $.ajax({
