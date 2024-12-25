@@ -134,6 +134,15 @@
         });
       };
 
+      const openCamera = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.capture = 'camera';
+        input.onchange = handleImageChange;
+        input.click();
+      };
+
       const handleInputChange = (event) => {
         const { name, value } = event.target;
         setUserDetails({ ...userDetails, [name]: value });
@@ -161,7 +170,7 @@
       return (
         <div style={styles.container}>
           <h1 style={styles.header} className="floating-header">UPLOAD IMAGE TO GASWALA</h1>
-          <input type="file" accept="image/*" capture="camera" style={styles.input} onChange={handleImageChange} />
+          <button onClick={openCamera} style={styles.input}>Take Photo</button>
           <div style={styles.successMessageContainer}>{message}</div>
           <div style={styles.imagePreviewContainer}>
             {imageUrl && <img src={imageUrl} style={styles.imagePreview} alt="Preview" />}
